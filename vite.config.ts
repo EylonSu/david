@@ -2,10 +2,10 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// Base path: VITE_BASE env overrides; default '/david/' for build and preview, '/' for dev.
-export default defineConfig(({ command, mode, isPreview }) => {
+// Base path: VITE_BASE env overrides; default '/'.
+export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, '.', '');
-  const base = env.VITE_BASE || (command === 'build' || isPreview ? '/david/' : '/');
+  const base = env.VITE_BASE || '/';
 
   return {
     base,
@@ -39,6 +39,8 @@ export default defineConfig(({ command, mode, isPreview }) => {
           globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2,json}'],
           globIgnores: ['**/mediapipe/**', '**/models/**', '**/assets/rnnoise-*.js'],
           navigateFallback: 'index.html',
+          // Firebase Auth's /__/auth/handler must reach the network.
+          navigateFallbackDenylist: [/^\/__\//],
           runtimeCaching: [
             {
               urlPattern: ({ url }) =>

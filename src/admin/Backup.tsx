@@ -37,7 +37,7 @@ export function Backup() {
       const { zip, data } = await readBackup(f);
       const ok = confirm(
         `בגיבוי: ${data.pictures.length} תמונות, ${data.lessons.length} שיעורים, ${data.praises.length} מחמאות.\n` +
-          'הייבוא ימחק את כל הנתונים הנוכחיים במכשיר ויחליף אותם. להמשיך?',
+          'הייבוא ימחק את כל הנתונים הנוכחיים במכשיר ויחליף אותם (וגם בענן, אם הסנכרון מחובר). להמשיך?',
       );
       if (!ok) return;
       const s = await importBackup(zip, data);
@@ -49,8 +49,8 @@ export function Backup() {
     <div className="admin-section">
       <h2>גיבוי</h2>
       <p className="muted small">
-        כל התמונות וההקלטות נשמרות רק במכשיר הזה. ייצאו קובץ גיבוי ושמרו אותו בדרייב או בוואטסאפ, כדי לשחזר או להעביר
-        למכשיר אחר.
+        כשמחוברים בלשונית סנכרון, התמונות וההקלטות נשמרות גם בענן ומסתנכרנות בין כל המכשירים. קובץ גיבוי הוא רשת ביטחון
+        נוספת: ייצאו אותו מדי פעם ושמרו בדרייב או בוואטסאפ.
       </p>
 
       <div className="card editor-block">

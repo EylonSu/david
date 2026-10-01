@@ -6,6 +6,8 @@ dev-dist
 screenshots
 .env
 .env.*
+!.env.example
+.firebase
 *.zip
 *.tsbuildinfo
 public/mediapipe/

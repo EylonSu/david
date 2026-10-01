@@ -1,5 +1,15 @@
 import JSZip from 'jszip';
-import { db, getSettings, type Lesson, type Picture, type Praise, type Settings } from '../db';
+import {
+  SETTINGS_ID,
+  db,
+  enqueue,
+  getSettings,
+  pictureHashes,
+  type Lesson,
+  type Picture,
+  type Praise,
+  type Settings,
+} from '../db';
 
 const FORMAT = 'david-backup';
 const VERSION = 1;
@@ -167,12 +177,29 @@ export async function importBackup(zip: JSZip, data: BackupData): Promise<Import
   }
   const lessons = (data.lessons ?? []).map((l) => ({ ...l, createdAt: l.createdAt ?? Date.now() }));
 
-  await db.transaction('rw', [db.pictures, db.lessons, db.praises, db.settings], async () => {
+  await db.transaction('rw', [db.pictures, db.lessons, db.praises, db.settings, db.outbox], async () => {
+    const [oldPics, oldLessonIds, oldPraises] = await Promise.all([
+      db.pictures.toArray(),
+      db.lessons.toCollection().primaryKeys(),
+      db.praises.toArray(),
+    ]);
     await Promise.all([db.pictures.clear(), db.lessons.clear(), db.praises.clear(), db.settings.clear()]);
     await db.pictures.bulkAdd(pictures);
     await db.lessons.bulkAdd(lessons);
     await db.praises.bulkAdd(praises);
     if (data.settings) await db.settings.put({ ...data.settings, key: 'settings' });
+
+    const picIds = new Set(pictures.map((p) => p.id));
+    const lessonIds = new Set(lessons.map((l) => l.id));
+    const praiseIds = new Set(praises.map((p) => p.id));
+    for (const p of oldPics) if (!picIds.has(p.id)) await enqueue('pictures', p.id, 'delete', pictureHashes(p));
+    for (const id of oldLessonIds) if (!lessonIds.has(id)) await enqueue('lessons', id, 'delete');
+    for (const p of oldPraises)
+      if (!praiseIds.has(p.id)) await enqueue('praises', p.id, 'delete', p.hash ? [p.hash] : undefined);
+    for (const id of picIds) await enqueue('pictures', id, 'put');
+    for (const id of lessonIds) await enqueue('lessons', id, 'put');
+    for (const id of praiseIds) await enqueue('praises', id, 'put');
+    await enqueue('settings', SETTINGS_ID, 'put');
   });
 
   return { pictures: pictures.length, lessons: lessons.length, praises: praises.length };

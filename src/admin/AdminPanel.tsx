@@ -5,12 +5,14 @@ import { Lessons } from './Lessons';
 import { Praises } from './Praises';
 import { Settings } from './Settings';
 import { Backup } from './Backup';
+import { Sync } from './Sync';
 
 const SECTIONS = [
   { key: 'pictures', label: 'תמונות' },
   { key: 'lessons', label: 'שיעורים' },
   { key: 'praises', label: 'מחמאות' },
   { key: 'settings', label: 'הגדרות' },
+  { key: 'sync', label: 'סנכרון' },
   { key: 'backup', label: 'גיבוי' },
 ] as const;
 
@@ -32,6 +34,9 @@ export function AdminPanel({ route }: { route: string[] }) {
       break;
     case 'settings':
       content = <Settings />;
+      break;
+    case 'sync':
+      content = <Sync />;
       break;
     case 'backup':
       content = <Backup />;

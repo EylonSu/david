@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://david-eylon.web.app", "https://david-eylon.firebaseapp.com", "http://localhost:5173"],
+    "method": ["GET", "HEAD"],
+    "responseHeader": ["Content-Type", "Content-Length", "Cache-Control"],
+    "maxAgeSeconds": 3600
+  }
+]
