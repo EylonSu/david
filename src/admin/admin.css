@@ -1,0 +1,128 @@
+.admin-section { display: flex; flex-direction: column; gap: var(--space-4); }
+.admin-section h2, .admin-section h3, .admin-section h4 { margin: 0; }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+.small { font-size: 0.9rem; }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.btn.disabled { opacity: 0.5; pointer-events: none; }
+.admin-error { color: var(--color-danger); margin: 0; }
+.admin-ok { color: var(--color-accent); margin: 0; font-weight: bold; }
+.hint {
+  margin: 0; padding: var(--space-3); border-radius: var(--radius-sm);
+  background: var(--color-accent-soft); font-size: 0.95rem;
+}
+
+/* Picture bank */
+.thumb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: var(--space-3); }
+.thumb {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: var(--space-2);
+  padding: var(--space-2); text-decoration: none; color: inherit;
+}
+.thumb .thumb-img { width: 100%; aspect-ratio: 1; }
+.thumb-img { object-fit: cover; border-radius: var(--radius-sm); background: var(--color-surface-2); }
+.thumb-word { font-weight: bold; font-size: 1.1rem; }
+.thumb-badge {
+  position: absolute; top: 6px; inset-inline-start: 6px; padding: 2px 8px; font-size: 0.8rem;
+  border-radius: var(--radius-pill); background: rgba(255, 255, 255, 0.9);
+}
+.thumb-badge.missing { color: var(--color-danger); }
+
+/* Editor */
+.editor-block { display: flex; flex-direction: column; gap: var(--space-3); }
+.editor-image {
+  display: grid; place-items: center; aspect-ratio: 1; max-width: 320px; width: 100%; margin-inline: auto;
+  border-radius: var(--radius-md); background: var(--color-surface-2); overflow: hidden;
+}
+.editor-image img { width: 100%; height: 100%; object-fit: cover; }
+.text-input {
+  font: inherit; font-size: 1.3rem; padding: var(--space-3); border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border); background: var(--color-surface); color: inherit; width: 100%;
+  box-sizing: border-box;
+}
+.text-input:focus { outline: none; border-color: var(--color-primary); }
+.sticky-actions {
+  position: sticky; bottom: 0; padding: var(--space-3) 0; background: var(--color-bg);
+}
+.sticky-actions .btn { flex: 1; }
+.small-btn { align-self: flex-start; }
+
+/* Recorder */
+.rec-box { display: flex; flex-direction: column; gap: var(--space-3); align-items: stretch; }
+.rec-box audio { width: 100%; }
+.rec-live {
+  width: 100%; max-width: 320px; margin-inline: auto; aspect-ratio: 3 / 4; object-fit: cover;
+  border-radius: var(--radius-md); background: #000; transform: scaleX(-1);
+}
+.rec-live[controls] { transform: none; }
+.rec-btn { font-size: 1.2rem; }
+.seg { display: flex; border: 2px solid var(--color-border); border-radius: var(--radius-pill); overflow: hidden; }
+.seg button {
+  flex: 1; font: inherit; padding: var(--space-3); border: none; background: var(--color-surface); color: inherit;
+}
+.seg button.active { background: var(--color-accent); color: #fff; }
+
+/* Modal / starter picker */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.4);
+  display: flex; align-items: flex-end; justify-content: center;
+}
+.modal {
+  width: 100%; max-width: 720px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column;
+  gap: var(--space-3); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.starter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: var(--space-2); }
+.starter-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; font: inherit; color: inherit;
+  padding: var(--space-2); border: 2px solid var(--color-border); border-radius: var(--radius-sm);
+  background: var(--color-surface);
+}
+.starter-item:active { border-color: var(--color-primary); }
+.starter-item img { width: 64px; height: 64px; }
+.attribution a { color: inherit; }
+
+/* Lessons */
+.admin-lesson-card { display: flex; flex-direction: column; gap: var(--space-3); }
+.admin-lesson-head {
+  display: flex; justify-content: space-between; align-items: center; font: inherit; font-size: 1.15rem;
+  background: none; border: none; color: inherit; padding: var(--space-2) 0; width: 100%; text-align: start;
+}
+.admin-lesson-body { display: flex; flex-direction: column; gap: var(--space-3); }
+.order-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.order-list li {
+  display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2);
+  border-radius: var(--radius-sm); background: var(--color-surface-2);
+}
+.order-list .thumb-img { width: 52px; height: 52px; }
+.order-word { flex: 1; font-weight: bold; }
+.icon-btn {
+  min-width: 44px; height: 44px; font-size: 1.1rem; border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border); background: var(--color-surface); color: inherit;
+}
+.icon-btn:disabled { opacity: 0.35; }
+.icon-btn.danger { color: var(--color-danger); }
+.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: var(--space-2); }
+.pick-item {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; font: inherit; color: inherit;
+  padding: 4px; border: 2px dashed var(--color-border); border-radius: var(--radius-sm); background: none;
+}
+.pick-item:disabled { opacity: 0.4; }
+.pick-item .thumb-img { width: 100%; aspect-ratio: 1; }
+
+/* Praises */
+.praise-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.praise-row { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-2) var(--space-3); }
+.praise-row audio { flex: 1; min-width: 0; }
+.praise-num { font-weight: bold; color: var(--color-text-muted); }
+
+/* Settings */
+.range { width: 100%; accent-color: var(--color-accent); height: 32px; }
+.range-labels { display: flex; justify-content: space-between; }
+.meter {
+  position: relative; height: 28px; border-radius: var(--radius-pill); overflow: hidden;
+  background: var(--color-surface-2); border: 2px solid var(--color-border);
+}
+.meter-fill { height: 100%; background: var(--color-sun); transition: width 60ms linear; }
+.meter-fill.over { background: var(--color-accent); }
+.meter-threshold { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--color-danger); }
+.mic-status { margin: 0; min-height: 1.4em; }
+.mic-status.heard { color: var(--color-accent); font-weight: bold; }
+.tips p { margin: 0; line-height: 1.6; }
