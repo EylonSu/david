@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { updateSettings, useSettings } from '../db';
 import { startVoiceDetector, type VoiceDetector } from '../audio/voiceDetector';
+import { useCamera } from '../media/useCamera';
 import './admin.css';
 
 export function Settings() {
@@ -9,6 +10,20 @@ export function Settings() {
   return (
     <div className="admin-section">
       <h2>הגדרות</h2>
+
+      <div className="card editor-block">
+        <h3>מראה (מצלמה)</h3>
+        <p className="muted small">דוד רואה את עצמו על המסך בזמן המשחק. המראה גדלה כשמקשיבים לו.</p>
+        <div className="seg">
+          <button className={settings.showMirror ? '' : 'active'} onClick={() => updateSettings({ showMirror: false })}>
+            כבוי
+          </button>
+          <button className={settings.showMirror ? 'active' : ''} onClick={() => updateSettings({ showMirror: true })}>
+            פועל
+          </button>
+        </div>
+        {settings.showMirror && <MirrorPreview />}
+      </div>
 
       <div className="card editor-block">
         <h3>רגישות המיקרופון</h3>
@@ -59,6 +74,18 @@ export function Settings() {
       </div>
     </div>
   );
+}
+
+function MirrorPreview() {
+  const { stream, failed } = useCamera(true);
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (ref.current) ref.current.srcObject = stream ?? null;
+  }, [stream]);
+
+  if (failed) return <p className="admin-error">אין גישה למצלמה</p>;
+  return <video ref={ref} className="rec-live" autoPlay muted playsInline />;
 }
 
 function MicTest({ sensitivity }: { sensitivity: number }) {

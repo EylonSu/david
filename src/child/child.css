@@ -244,9 +244,32 @@
 }
 @keyframes reward-in { from { transform: translateY(40%) scale(0.6); opacity: 0; } }
 
+/* ---------- Mirror ---------- */
+/* Above the turn overlay (50), below the celebration (60) */
+.mirror {
+  position: fixed;
+  bottom: var(--space-3);
+  inset-inline-start: var(--space-3);
+  z-index: 55;
+  width: clamp(80px, 14vmin, 120px);
+  height: clamp(80px, 14vmin, 120px);
+  border-radius: 50%;
+  border: 4px solid #fff;
+  box-shadow: var(--shadow-soft);
+  object-fit: cover;
+  background: #000;
+  transform: scaleX(-1);
+  pointer-events: none;
+  transition: width 500ms var(--ease-bounce), height 500ms var(--ease-bounce);
+}
+.play-screen:has(.turn--listening) .mirror {
+  width: clamp(160px, 34vmin, 320px);
+  height: clamp(160px, 34vmin, 320px);
+}
+
 /* ---------- One-by-one ---------- */
 .single-screen { padding: 0; }
-.single-slide { position: absolute; inset: 0; }
+.single-slide { position: absolute; inset: 0; z-index: 0; }
 .single-slide--in { animation: slide-in 500ms var(--ease-bounce); }
 .single-slide--out { animation: slide-out 500ms ease-in forwards; }
 /* RTL: next picture comes from the left */

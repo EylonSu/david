@@ -4,13 +4,17 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "predev": "node scripts/copy-mediapipe.mjs",
     "dev": "vite",
+    "prebuild": "node scripts/copy-mediapipe.mjs",
     "build": "tsc -b && vite build",
     "typecheck": "tsc -b",
     "preview": "vite preview"
   },
   "dependencies": {
     "@fontsource/varela-round": "^5.1.0",
+    "@mediapipe/tasks-vision": "^1.0.1",
+    "@shiguredo/rnnoise-wasm": "^2025.1.5",
     "canvas-confetti": "^1.9.4",
     "dexie": "^4.0.10",
     "dexie-react-hooks": "^1.1.7",

@@ -17,21 +17,30 @@ export function Lessons() {
   const lessons = useLessons();
   const pictures = usePictures();
   const [openId, setOpenId] = useState<string>();
+  const [creating, setCreating] = useState(false);
 
-  async function create() {
-    const name = prompt('שם השיעור:', `שיעור ${(lessons?.length ?? 0) + 1}`);
-    if (!name?.trim()) return;
-    setOpenId(await addLesson(name.trim()));
+  async function create(name: string) {
+    setCreating(false);
+    setOpenId(await addLesson(name));
   }
 
   return (
     <div className="admin-section">
       <div className="section-head">
         <h2>שיעורים</h2>
-        <button className="btn btn-primary" onClick={create}>
+        <button className="btn btn-primary" onClick={() => setCreating(true)}>
           ＋ שיעור חדש
         </button>
       </div>
+      {creating && (
+        <NameDialog
+          title="שיעור חדש"
+          initial={`שיעור ${(lessons?.length ?? 0) + 1}`}
+          submitLabel="יצירה"
+          onSubmit={create}
+          onClose={() => setCreating(false)}
+        />
+      )}
       <p className="muted small">בכל שיעור עד {MAX_LESSON_PICTURES} תמונות. הסדר קובע את הסדר במצב "אחת אחת".</p>
       {lessons?.length === 0 && <p className="muted">עדיין אין שיעורים.</p>}
       {lessons?.map((l) => (
@@ -72,9 +81,11 @@ function LessonCard({
     set(next);
   };
 
-  async function rename() {
-    const name = prompt('שם חדש:', lesson.name);
-    if (name?.trim()) await renameLesson(lesson.id, name.trim());
+  const [renaming, setRenaming] = useState(false);
+
+  async function rename(name: string) {
+    setRenaming(false);
+    await renameLesson(lesson.id, name);
   }
 
   async function remove() {
@@ -92,13 +103,22 @@ function LessonCard({
       {open && (
         <div className="admin-lesson-body">
           <div className="btn-row">
-            <button className="btn" onClick={rename}>
+            <button className="btn" onClick={() => setRenaming(true)}>
               ✏️ שינוי שם
             </button>
             <button className="btn btn-danger" onClick={remove}>
               🗑️ מחיקה
             </button>
           </div>
+          {renaming && (
+            <NameDialog
+              title="שינוי שם השיעור"
+              initial={lesson.name}
+              submitLabel="שמירה"
+              onSubmit={rename}
+              onClose={() => setRenaming(false)}
+            />
+          )}
 
           <h4>בשיעור (לפי הסדר)</h4>
           {selected.length === 0 && <p className="muted small">בחרו תמונות מהרשימה למטה.</p>}
@@ -138,6 +158,55 @@ function LessonCard({
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+function NameDialog({
+  title,
+  initial,
+  submitLabel,
+  onSubmit,
+  onClose,
+}: {
+  title: string;
+  initial: string;
+  submitLabel: string;
+  onSubmit: (name: string) => void;
+  onClose: () => void;
+}) {
+  const [name, setName] = useState(initial);
+  const trimmed = name.trim();
+
+  return (
+    <div className="modal-backdrop" onClick={onClose}>
+      <form
+        className="modal card"
+        onClick={(e) => e.stopPropagation()}
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (trimmed) onSubmit(trimmed);
+        }}
+      >
+        <h3>{title}</h3>
+        <input
+          className="text-input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          onFocus={(e) => e.target.select()}
+          onKeyDown={(e) => e.key === 'Escape' && onClose()}
+          placeholder="שם השיעור"
+          autoFocus
+        />
+        <div className="btn-row">
+          <button type="submit" className="btn btn-primary" disabled={!trimmed}>
+            {submitLabel}
+          </button>
+          <button type="button" className="btn" onClick={onClose}>
+            ביטול
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

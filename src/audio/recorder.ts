@@ -13,6 +13,8 @@ export interface RecorderOptions {
   maxDurationMs?: number;
   /** Called when the stream is ready, e.g. to show a live video preview. */
   onStream?: (stream: MediaStream) => void;
+  /** Reuse an already-open stream (e.g. from a preview); it is released when recording ends. */
+  stream?: MediaStream;
 }
 
 export interface RecordingSession {
@@ -47,19 +49,23 @@ export const isRecordingSupported = (): boolean =>
 /** Release all tracks of a stream. */
 export const stopStream = (s: MediaStream) => s.getTracks().forEach((t) => t.stop());
 
-/**
- * Start recording audio, or front-camera video with audio.
- * Throws if permission is denied / unsupported.
- */
-export async function startRecording(opts: RecorderOptions): Promise<RecordingSession> {
-  const { kind, maxDurationMs = 5000 } = opts;
-  const stream = await navigator.mediaDevices.getUserMedia({
+/** Open the mic, or front camera + mic. Throws if permission is denied / unsupported. */
+export const openStream = (kind: MediaKind): Promise<MediaStream> =>
+  navigator.mediaDevices.getUserMedia({
     audio: { echoCancellation: true, noiseSuppression: true },
     video:
       kind === 'video'
         ? { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 640 } }
         : false,
   });
+
+/**
+ * Start recording audio, or front-camera video with audio.
+ * Throws if permission is denied / unsupported.
+ */
+export async function startRecording(opts: RecorderOptions): Promise<RecordingSession> {
+  const { kind, maxDurationMs = 5000 } = opts;
+  const stream = opts.stream ?? (await openStream(kind));
   opts.onStream?.(stream);
 
   const mimeType = pickMimeType(kind);

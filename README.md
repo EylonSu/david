@@ -27,3 +27,7 @@ npm run preview   # serve the build (with service worker)
 
 ## Attribution
 Emoji graphics by [OpenMoji](https://openmoji.org/) – the open-source emoji and icon project. License: [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+
+Background removal uses [MediaPipe](https://github.com/google-ai-edge/mediapipe) (tasks-vision + Selfie Segmenter model) by Google. License: [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+Noise suppression uses [RNNoise](https://github.com/xiph/rnnoise) by Xiph.Org / Jean-Marc Valin, via [@shiguredo/rnnoise-wasm](https://github.com/shiguredo/rnnoise-wasm). License: [BSD 3-Clause](https://github.com/xiph/rnnoise/blob/master/COPYING).

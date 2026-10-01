@@ -5,6 +5,7 @@ import { navigate } from '../router';
 import { useBlobUrl } from '../media/useBlobUrl';
 import { Turn } from './Turn';
 import { Celebration, CornerHome } from './Celebration';
+import { Mirror } from './Mirror';
 import { StarIcon } from './icons';
 import { tapFeedback, useUnlockAudio } from './feedback';
 import './child.css';
@@ -88,6 +89,7 @@ export function GridMode({ lessonId }: { lessonId: string }) {
         ))}
       </div>
       {active && <Turn key={active.id} picture={active} onDone={finishTurn} />}
+      <Mirror />
       {celebrate && (
         <Celebration
           onAgain={() => {

@@ -37,7 +37,31 @@ export default defineConfig(({ command, mode, isPreview }) => {
         mode: 'development',
         workbox: {
           globPatterns: ['**/*.{js,css,html,svg,png,woff,woff2,json}'],
+          globIgnores: ['**/mediapipe/**', '**/models/**', '**/assets/rnnoise-*.js'],
           navigateFallback: 'index.html',
+          runtimeCaching: [
+            {
+              urlPattern: ({ url }) =>
+                url.pathname.includes('/mediapipe/') ||
+                url.pathname.includes('/models/') ||
+                /\/assets\/rnnoise-[^/]+\.js$/.test(url.pathname),
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'media-models',
+                cacheableResponse: { statuses: [0, 200] },
+                expiration: { maxEntries: 20 },
+              },
+            },
+            {
+              urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/npm\/(openmoji|cldr-annotations)/,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'openmoji-cdn',
+                cacheableResponse: { statuses: [0, 200] },
+                expiration: { maxEntries: 600 },
+              },
+            },
+          ],
         },
       }),
     ],

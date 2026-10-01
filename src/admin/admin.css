@@ -63,11 +63,15 @@
 /* Modal / starter picker */
 .modal-backdrop {
   position: fixed; inset: 0; z-index: 50; background: rgba(0, 0, 0, 0.4);
-  display: flex; align-items: flex-end; justify-content: center;
+  display: flex; align-items: center; justify-content: center; padding: var(--space-4);
 }
 .modal {
   width: 100%; max-width: 720px; max-height: 85vh; overflow-y: auto; display: flex; flex-direction: column;
-  gap: var(--space-3); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  gap: var(--space-3); border-radius: var(--radius-lg);
+}
+.starter-search {
+  position: sticky; top: calc(-1 * var(--space-4)); z-index: 1; margin-block: calc(-1 * var(--space-2));
+  padding-block: var(--space-2); background: var(--color-surface);
 }
 .starter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: var(--space-2); }
 .starter-item {

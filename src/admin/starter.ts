@@ -14,8 +14,12 @@ export async function loadStarterList(): Promise<StarterItem[]> {
 }
 
 /** Fetch a starter SVG and rasterize it to a square PNG on white. */
-export async function rasterizeStarter(file: string, size = 512): Promise<Blob> {
-  const res = await fetch(starterUrl(file));
+export const rasterizeStarter = (file: string, size = 512) => rasterizeSvg(starterUrl(file), size);
+
+/** Fetch an SVG (same- or cross-origin) and rasterize it to a square PNG on white. */
+export async function rasterizeSvg(src: string, size = 512): Promise<Blob> {
+  const res = await fetch(src);
+  if (!res.ok) throw new Error(`SVG fetch failed: ${res.status}`);
   const svg = await res.blob();
   const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
   try {

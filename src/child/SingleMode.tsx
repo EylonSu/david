@@ -3,6 +3,7 @@ import { useLessonPictures } from '../db';
 import { navigate } from '../router';
 import { Turn } from './Turn';
 import { Celebration, CornerHome } from './Celebration';
+import { Mirror } from './Mirror';
 import { useUnlockAudio } from './feedback';
 import './child.css';
 
@@ -41,6 +42,7 @@ export function SingleMode({ lessonId }: { lessonId: string }) {
           <Turn picture={picture} variant="full" onDone={next} />
         </div>
       )}
+      <Mirror />
       {finished && (
         <Celebration
           onAgain={() => {

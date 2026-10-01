@@ -40,6 +40,8 @@ export interface Settings {
   micSensitivity: number;
   /** Listening window per attempt, in seconds. */
   listenSeconds: number;
+  /** Show the front camera as a mirror during play. */
+  showMirror: boolean;
 }
 
 interface SettingsRow extends Settings {
@@ -47,7 +49,7 @@ interface SettingsRow extends Settings {
 }
 
 export const MAX_LESSON_PICTURES = 8;
-export const DEFAULT_SETTINGS: Settings = { micSensitivity: 3, listenSeconds: 6 };
+export const DEFAULT_SETTINGS: Settings = { micSensitivity: 3, listenSeconds: 6, showMirror: false };
 
 // ---------- Database ----------
 

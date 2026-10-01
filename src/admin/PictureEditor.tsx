@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import {
   addPicture,
   clearPictureMedia,
@@ -11,7 +11,8 @@ import { resizeImage } from '../media/image';
 import { useBlobUrl } from '../media/useBlobUrl';
 import { navigate } from '../router';
 import { RecorderBox } from './RecorderBox';
-import { loadStarterList, rasterizeStarter, starterUrl, type StarterItem } from './starter';
+import { loadOpenmojiIndex, openmojiSvgUrl, searchOpenmoji, type OpenmojiItem } from './openmoji';
+import { loadStarterList, rasterizeSvg, starterUrl, type StarterItem } from './starter';
 import './admin.css';
 
 /** Picture editor. `pictureId` undefined = new picture. */
@@ -54,13 +55,14 @@ export function PictureEditor({ pictureId }: { pictureId?: string }) {
     }
   }
 
-  async function pickStarter(item: StarterItem) {
+  async function pickStarter(pick: StarterPick) {
     setShowStarter(false);
     setBusy(true);
+    setError(undefined);
     try {
-      setImage(await rasterizeStarter(item.file));
+      setImage(await rasterizeSvg(pick.url));
       setBuiltIn(true);
-      if (!word.trim()) setWord(item.word);
+      if (!word.trim() && pick.word) setWord(pick.word);
     } catch {
       setError('לא הצלחנו לטעון את האיור');
     } finally {
@@ -177,12 +179,31 @@ export function PictureEditor({ pictureId }: { pictureId?: string }) {
   );
 }
 
-function StarterPicker({ onPick, onClose }: { onPick: (i: StarterItem) => void; onClose: () => void }) {
+interface StarterPick {
+  url: string;
+  word?: string;
+}
+
+function StarterPicker({ onPick, onClose }: { onPick: (p: StarterPick) => void; onClose: () => void }) {
   const [items, setItems] = useState<StarterItem[]>();
   const [failed, setFailed] = useState(false);
+  const [query, setQuery] = useState('');
+  const q = useDeferredValue(query.trim());
+  const [index, setIndex] = useState<OpenmojiItem[]>();
+  const [indexFailed, setIndexFailed] = useState(false);
+  const searching = q !== '';
+
   useEffect(() => {
     loadStarterList().then(setItems, () => setFailed(true));
   }, []);
+
+  useEffect(() => {
+    if (!q || index) return;
+    setIndexFailed(false);
+    loadOpenmojiIndex().then(setIndex, () => setIndexFailed(true));
+  }, [q, index]);
+
+  const results = useMemo(() => (index && q ? searchOpenmoji(index, q) : []), [index, q]);
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -193,15 +214,56 @@ function StarterPicker({ onPick, onClose }: { onPick: (i: StarterItem) => void; 
             סגירה
           </button>
         </div>
-        {failed && <p className="admin-error">לא הצלחנו לטעון את האיורים</p>}
-        <div className="starter-grid">
-          {items?.map((it) => (
-            <button key={it.file} className="starter-item" onClick={() => onPick(it)}>
-              <img src={starterUrl(it.file)} alt={it.word} />
-              <span>{it.word}</span>
-            </button>
-          ))}
+        <div className="starter-search">
+          <input
+            className="text-input"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="חיפוש איור (למשל: כלב, dog)"
+          />
         </div>
+        {!searching ? (
+          <>
+            {failed && <p className="admin-error">לא הצלחנו לטעון את האיורים</p>}
+            <div className="starter-grid">
+              {items?.map((it) => (
+                <button
+                  key={it.file}
+                  className="starter-item"
+                  onClick={() => onPick({ url: starterUrl(it.file), word: it.word })}
+                >
+                  <img src={starterUrl(it.file)} alt={it.word} />
+                  <span>{it.word}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        ) : indexFailed ? (
+          <p className="admin-error">צריך חיבור לאינטרנט כדי לחפש</p>
+        ) : !index ? (
+          <p className="muted">טוען…</p>
+        ) : results.length === 0 ? (
+          <p className="muted">לא נמצאו איורים</p>
+        ) : (
+          <div className="starter-grid">
+            {results.map((it) => (
+              <button
+                key={it.hexcode}
+                className="starter-item"
+                onClick={() => onPick({ url: openmojiSvgUrl(it.hexcode), word: it.nameHe })}
+              >
+                <img
+                  src={openmojiSvgUrl(it.hexcode)}
+                  alt={it.nameHe ?? it.nameEn}
+                  loading="lazy"
+                  crossOrigin="anonymous"
+                />
+                <span>{it.nameHe ?? it.nameEn}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <p className="muted small attribution">
           האיורים מתוך{' '}
           <a href="https://openmoji.org" target="_blank" rel="noreferrer">
